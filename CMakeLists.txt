@@ -15,11 +15,14 @@ project ("poc-opencv")
 find_package(fmt CONFIG REQUIRED)
 find_package(OpenCV REQUIRED)
 
+include_directories(${OpenCV_INCLUDE_DIRS})
+
 # Add source to this project's executable.
-add_executable (poc-opencv "poc-opencv.cpp" "poc-opencv.h")
+add_executable (poc-opencv "poc-opencv.cpp" "poc-opencv.h" "ImageTransformer.cpp" "ImageTransformer.h")
 
 # Target needed libraries
 target_link_libraries(poc-opencv PRIVATE fmt::fmt)
+target_link_libraries(poc-opencv PRIVATE ${OpenCV_LIBS})
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET poc-opencv PROPERTY CXX_STANDARD 20)

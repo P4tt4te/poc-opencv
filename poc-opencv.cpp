@@ -1,13 +1,12 @@
-﻿// poc-opencv.cpp : Defines the entry point for the application.
-
+﻿#include <fmt/base.h>
 #include "poc-opencv.h"
-#include <fmt/core.h>
-#include <opencv2/opencv.hpp>
-
-using namespace cv;
+#include "ImageTransformer.h"
 
 int main()
 {
 	fmt::print("Hello, {}!\n", "world");
+	ImageTransformer imgTrans("C:/Users/Edward/Pictures/chaudok.png");
+	imgTrans.blur();
+
 	return 0;
 }
