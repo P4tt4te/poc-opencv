@@ -18,7 +18,7 @@ find_package(OpenCV REQUIRED)
 include_directories(${OpenCV_INCLUDE_DIRS})
 
 # Add source to this project's executable.
-add_executable (poc-opencv "poc-opencv.cpp" "poc-opencv.h" "ImageTransformer.cpp" "ImageTransformer.h")
+add_executable (poc-opencv "poc-opencv.cpp" "poc-opencv.h" "ImageTransformer.cpp" "ImageTransformer.h" "UIWindow.h" "UIWindow.cpp")
 
 # Target needed libraries
 target_link_libraries(poc-opencv PRIVATE fmt::fmt)

@@ -1,16 +1,30 @@
 #include "ImageTransformer.h"
-#include <opencv2/opencv.hpp>
-#include "opencv2/imgproc.hpp"
-#include "opencv2/highgui.hpp"
 
 ImageTransformer::ImageTransformer(std::string _sSource) {
 	sInitialSource = _sSource;
+	mImg = cv::imread(sInitialSource);
 }
 
-void ImageTransformer::blur() const {
-	cv::Mat img = cv::imread(sInitialSource);
+void ImageTransformer::setSource(std::string _sSource) {
+	sInitialSource = _sSource;
+	mInitialImg = cv::imread(sInitialSource);
+	mImg = mInitialImg;
+}
+
+void ImageTransformer::blur(const int _size) const {
+	cv::Mat imgBlur = mImg;
+	cv::blur(imgBlur, mImg, cv::Size(_size, _size));
+}
+
+void ImageTransformer::medianBlur(const int _size) const {
 	cv::Mat imgBlur;
-	cv::blur(img, imgBlur, cv::Size(5, 5));
-	cv::imshow("Blur", imgBlur);
+	cv::medianBlur(mImg, imgBlur, _size);
+	cv::imshow("Median Blur", imgBlur);
 	cv::waitKey(0);
+}
+
+void ImageTransformer::gaussianBlur(const int _size) const {
+	cv::Mat imgBlur;
+	cv::GaussianBlur(mImg, imgBlur, cv::Size(_size, _size), 0);
+	///mImg = imgBlur;
 }
