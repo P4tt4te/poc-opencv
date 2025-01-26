@@ -11,20 +11,17 @@ void ImageTransformer::setSource(std::string _sSource) {
 	mImg = mInitialImg;
 }
 
-void ImageTransformer::blur(const int _size) const {
+void ImageTransformer::blur(int _size) const {
 	cv::Mat imgBlur = mImg;
 	cv::blur(imgBlur, mImg, cv::Size(_size, _size));
 }
 
-void ImageTransformer::medianBlur(const int _size) const {
-	cv::Mat imgBlur;
-	cv::medianBlur(mImg, imgBlur, _size);
-	cv::imshow("Median Blur", imgBlur);
-	cv::waitKey(0);
+void ImageTransformer::medianBlur(int _size) const {
+	cv::Mat imgBlur = mImg;
+	cv::medianBlur(imgBlur, mImg, _size);
 }
 
-void ImageTransformer::gaussianBlur(const int _size) const {
-	cv::Mat imgBlur;
-	cv::GaussianBlur(mImg, imgBlur, cv::Size(_size, _size), 0);
-	///mImg = imgBlur;
+void ImageTransformer::gaussianBlur(int _size) const {
+	cv::Mat imgBlur = mImg;
+	cv::GaussianBlur(imgBlur, mImg, cv::Size(_size, _size), 0);
 }

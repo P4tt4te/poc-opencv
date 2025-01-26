@@ -1,18 +1,17 @@
-﻿#include <fmt/base.h>
-#include "poc-opencv.h"
-#include "ImageTransformer.h"
+﻿#include "ImageTransformer.h"
 #include "UIWindow.h"
 
 int main()
 {
-	fmt::print("Hello, {}!\n", "world");
-	ImageTransformer imgTrans("C:/Users/Edward/Pictures/chaudok.png");
-	const int size = 50;
+	ImageTransformer imgTrans("C:/Users/edwar/Pictures/mat.png");
+	int size = 9;
 	imgTrans.blur(size);
-	//imgTrans.medianBlur(size);
-	//imgTrans.gaussianBlur(size);
+	imgTrans.medianBlur(size);
+	imgTrans.gaussianBlur(size);
 
 	UIWindow window("Image");
+
+	window.findPath();
 	window.showImage(imgTrans.getImg());
 
 
