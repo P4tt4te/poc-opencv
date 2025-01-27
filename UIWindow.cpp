@@ -4,6 +4,7 @@
 #include "WinUser.h"
 #include "shellapi.h"
 #include "shlobj_core.h"
+#include <opencv2/highgui.hpp>
 //#pragma comment(lib, "shell32")
 
 UIWindow::UIWindow(std::string _sWindowName)
@@ -56,9 +57,17 @@ void UIWindow::findPath()
 	CoUninitialize();
 }
 
+static void test(int state, void* userdata) {  }
+
 void UIWindow::showImage(const cv::Mat& _img) const
 {
 	cv::imshow(sWindowName, _img);
+	cv::waitKey(0);
+}
+
+void UIWindow::createButton() const
+{
+	cv::createButton("btn1", &test);
 	cv::waitKey(0);
 }
 
