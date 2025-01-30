@@ -6,10 +6,12 @@
 #include "shlobj_core.h"
 #include <opencv2/highgui.hpp>
 #include "cvui.h"
+//#include "ImageTransformer.h"
 
-UIWindow::UIWindow(std::string _sWindowName)
+UIWindow::UIWindow(std::string _sWindowName, ImageTransformer* _imageTransformer)
 {
 	sWindowName = _sWindowName;
+	ptrImageTransformer = _imageTransformer;
 }
 
 void UIWindow::createWindow() const
@@ -17,19 +19,20 @@ void UIWindow::createWindow() const
 	cvui::init(sWindowName);
 }
 
-void UIWindow::drawMenu(cv::Mat& _frame) const
+void UIWindow::drawMenu(cv::Mat& _frame, std::string& _sCurrentPage) const 
 {
+
 	_frame = cv::Scalar(49, 52, 49);
-	//cvui::beginColumn(_frame, 10, 20);
+	cvui::beginColumn(_frame, 10, 20);
 
 
-		cvui::text(_frame, 10, 10,"IEA");
-		if (cvui::button(_frame, 100, 40, "Button")) {
-			// button was clicked
-		}
-	//cvui::endColumn();
+	cvui::text("IEA");
+	if (cvui::button(100, 40, "Open editor")) {
+		// button was clicked
+		_sCurrentPage = "editor";
+	}
+	cvui::endColumn();
 
-	// Show window content
 	cvui::imshow(sWindowName, _frame);
 }
 
@@ -77,9 +80,26 @@ void UIWindow::findPath()
 	CoUninitialize();
 }
 
-void UIWindow::drawEditor() const
+void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage) const
 {
+	_frame = cv::Scalar(49, 52, 49);
 
+	if (ptrImageTransformer != nullptr)
+	{
+		cv::Mat a = ptrImageTransformer->getImg();
+		// TODO: transform \ to / for ImageTransformer
+		cv::Mat b = cv::imread("C:/Users/edwar/Documents/perso/dev/poc-opencv/assets/placeholder.jpg", cv::IMREAD_COLOR);
+
+		// Resize to fit window
+		int down_width = 598;
+		int down_height = 398;
+		cv::Mat resized_down;
+		resize(a, resized_down, cv::Size(down_width, down_height), cv::INTER_LINEAR);
+
+		cvui::image(_frame, 1, 1, resized_down);
+	}
+
+	cvui::imshow(sWindowName, _frame);
 }
 
 void UIWindow::showImage(const cv::Mat& _img) const

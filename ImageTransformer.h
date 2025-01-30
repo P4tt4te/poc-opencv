@@ -10,7 +10,7 @@ private:
 public:
 	ImageTransformer(std::string _sSource);
 	void setSource(std::string _sSource);
-	const cv::Mat& getImg() const { return mImg; }
+	cv::Mat& getImg() { return mImg; };
 	void blur(int _size) const;
 	void medianBlur(int _size) const;
 	void gaussianBlur(int _size) const;

@@ -1,9 +1,11 @@
-﻿#define CVUI_IMPLEMENTATION
-#include "cvui.h"
-#include "ImageTransformer.h"
-#include "UIWindow.h"
-#include <windows.h>
+﻿#include <windows.h>
 #include <stdio.h>
+
+#define CVUI_IMPLEMENTATION
+#include "cvui.h"
+
+#include "UIWindow.h"
+
 
 int main()
 {
@@ -14,24 +16,27 @@ int main()
 	cv::Mat frame;
 	
 	// C:/Users/edwar/Pictures/Acer/Acer_Wallpaper_02_5000x2813.jpg
-	ImageTransformer imgTrans("");
+	std::string sFullPathName = "";
+	char fullFilename[MAX_PATH];
+	GetFullPathName("poc-opencv/assets/placeholder.png", MAX_PATH, fullFilename, nullptr);
+	sFullPathName = fullFilename;
 
-	UIWindow window("Image edition automation");
+
+	ImageTransformer imageTransformInstance(sFullPathName);
+	ImageTransformer* ptrImageInstance = &imageTransformInstance;
+
+	UIWindow window("Image edition automation", ptrImageInstance);
 	window.createWindow();
 
 	while (true)
 	{
 		frame = cv::Mat(cv::Size(600, 400), CV_8UC3);
 		if (sCurrentPage == "menu")
-		{
-			window.drawMenu(frame);
-		} else if (sCurrentPage == "editor")
-		{
-			window.drawEditor();
-		} else
-		{
+			window.drawMenu(frame, sCurrentPage);
+		else if (sCurrentPage == "editor")
+			window.drawEditor(frame, sCurrentPage);
+		else
 			break;
-		}
 
 		// Check if ESC key was pressed
 		if (cv::waitKey(20) == 27) {

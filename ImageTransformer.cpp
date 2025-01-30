@@ -2,7 +2,7 @@
 
 ImageTransformer::ImageTransformer(std::string _sSource) {
 	sInitialSource = _sSource;
-	mImg = cv::imread(sInitialSource);
+	mImg = cv::imread(sInitialSource, cv::IMREAD_COLOR);
 }
 
 void ImageTransformer::setSource(std::string _sSource) {
