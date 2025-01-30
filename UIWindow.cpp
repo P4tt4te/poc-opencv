@@ -5,12 +5,32 @@
 #include "shellapi.h"
 #include "shlobj_core.h"
 #include <opencv2/highgui.hpp>
-//#pragma comment(lib, "shell32")
+#include "cvui.h"
 
 UIWindow::UIWindow(std::string _sWindowName)
 {
 	sWindowName = _sWindowName;
+}
 
+void UIWindow::createWindow() const
+{
+	cvui::init(sWindowName);
+}
+
+void UIWindow::drawMenu(cv::Mat& _frame) const
+{
+	_frame = cv::Scalar(49, 52, 49);
+	//cvui::beginColumn(_frame, 10, 20);
+
+
+		cvui::text(_frame, 10, 10,"IEA");
+		if (cvui::button(_frame, 100, 40, "Button")) {
+			// button was clicked
+		}
+	//cvui::endColumn();
+
+	// Show window content
+	cvui::imshow(sWindowName, _frame);
 }
 
 void UIWindow::findPath()
@@ -57,17 +77,25 @@ void UIWindow::findPath()
 	CoUninitialize();
 }
 
-static void test(int state, void* userdata) {  }
+void UIWindow::drawEditor() const
+{
+
+}
 
 void UIWindow::showImage(const cv::Mat& _img) const
 {
-	cv::imshow(sWindowName, _img);
+	cv::Mat frame = cv::Mat(cv::Size(400, 200), CV_8UC3);
+	frame = cv::Scalar(49, 52, 49);
+	cvui::text(frame, 10, 15, "Hello world!");
+
+	// Show window content
+	cvui::imshow(sWindowName, frame);
+	//cv::imshow(sWindowName, _img);
 	cv::waitKey(0);
 }
 
 void UIWindow::createButton() const
 {
-	cv::createButton("btn1", &test);
 	cv::waitKey(0);
 }
 
