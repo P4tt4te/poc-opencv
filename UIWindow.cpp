@@ -87,8 +87,6 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage) const
 	if (ptrImageTransformer != nullptr)
 	{
 		cv::Mat a = ptrImageTransformer->getImg();
-		// TODO: transform \ to / for ImageTransformer
-		cv::Mat b = cv::imread("C:/Users/edwar/Documents/perso/dev/poc-opencv/assets/placeholder.jpg", cv::IMREAD_COLOR);
 
 		// Resize to fit window
 		int down_width = 598;

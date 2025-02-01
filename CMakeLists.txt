@@ -17,6 +17,9 @@ find_package(OpenCV REQUIRED)
 
 include_directories(${OpenCV_INCLUDE_DIRS})
 
+# Copy assets to build folder
+file(COPY ${CMAKE_SOURCE_DIR}/assets DESTINATION ${CMAKE_BINARY_DIR}/)
+
 # Add source to this project's executable.
 add_executable (poc-opencv "poc-opencv.cpp" "poc-opencv.h" "ImageTransformer.cpp" "ImageTransformer.h" "UIWindow.h" "UIWindow.cpp")
 

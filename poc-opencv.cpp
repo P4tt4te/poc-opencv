@@ -18,9 +18,8 @@ int main()
 	// C:/Users/edwar/Pictures/Acer/Acer_Wallpaper_02_5000x2813.jpg
 	std::string sFullPathName = "";
 	char fullFilename[MAX_PATH];
-	GetFullPathName("poc-opencv/assets/placeholder.png", MAX_PATH, fullFilename, nullptr);
+	GetFullPathName("./assets/placeholder.jpg", MAX_PATH, fullFilename, nullptr);
 	sFullPathName = fullFilename;
-
 
 	ImageTransformer imageTransformInstance(sFullPathName);
 	ImageTransformer* ptrImageInstance = &imageTransformInstance;

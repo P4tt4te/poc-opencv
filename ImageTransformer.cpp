@@ -2,11 +2,13 @@
 
 ImageTransformer::ImageTransformer(std::string _sSource) {
 	sInitialSource = _sSource;
+	std::replace(sInitialSource.begin(), sInitialSource.end(), '\\', '/');
 	mImg = cv::imread(sInitialSource, cv::IMREAD_COLOR);
 }
 
 void ImageTransformer::setSource(std::string _sSource) {
 	sInitialSource = _sSource;
+	std::replace(sInitialSource.begin(), sInitialSource.end(), '\\', '/');
 	mInitialImg = cv::imread(sInitialSource);
 	mImg = mInitialImg;
 }
