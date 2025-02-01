@@ -97,6 +97,16 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage) const
 		cvui::image(_frame, 1, 1, resized_down);
 	}
 
+	cvui::window(_frame, 10, 10, 100, 100, "Editor");
+	cvui::beginColumn(_frame, 20, 40, 100, 100, 10);
+		cvui::text("Test");
+		if (cvui::button("Go Back"))
+		{
+			_sCurrentPage = "menu";
+		}
+	cvui::endColumn();
+
+
 	cvui::imshow(sWindowName, _frame);
 }
 
