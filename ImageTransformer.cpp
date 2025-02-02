@@ -4,6 +4,7 @@ ImageTransformer::ImageTransformer(std::string _sSource) {
 	sInitialSource = _sSource;
 	std::replace(sInitialSource.begin(), sInitialSource.end(), '\\', '/');
 	mImg = cv::imread(sInitialSource, cv::IMREAD_COLOR);
+	mInitialImg = mImg;
 }
 
 void ImageTransformer::setSource(std::string _sSource) {
@@ -13,8 +14,10 @@ void ImageTransformer::setSource(std::string _sSource) {
 	mImg = mInitialImg;
 }
 
-void ImageTransformer::blur(int _size) const {
-	cv::Mat imgBlur = mImg;
+void ImageTransformer::blur(int _size) {
+	mInitialImg = cv::imread(sInitialSource);
+	mImg = mInitialImg;
+	cv::Mat imgBlur = mInitialImg;
 	cv::blur(imgBlur, mImg, cv::Size(_size, _size));
 }
 

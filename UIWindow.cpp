@@ -130,10 +130,14 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 			iEditorY += iYDiff;
 	}
 	
+	
 
 	cvui::window(_frame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
 	cvui::beginColumn(_frame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
 		cvui::text("Current file : ");
+
+		cv::Mat lena_face = cv::imread("C:/Users/edwar/Documents/perso/dev/poc-opencv/assets/drag.png");
+		cvui::image(_frame, iEditorX + iEditorWidth - 20, iEditorY, lena_face);
 
 		if (cvui::button("Open file"))
 		{
@@ -144,9 +148,25 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 		{
 			_sCurrentPage = "menu";
 		}
+
+		if (cvui::trackbar(iEditorWidth - 20, &dBlurValue, (double)0.0, (double)15.0))
+		{
+			if (floor(dBlurValue + 0.5) > 1)
+			{
+				ptrImageTransformer->blur(floor(dBlurValue + 0.5));
+			}
+			else
+			{
+				ptrImageTransformer->blur(1);
+			}
+
+			//ptrImageTransformer->medianBlur(floor(dBlurValue + 0.5));
+			fmt::println("Trackbar value: {}", dBlurValue);
+		}
+
 	cvui::endColumn();
 
-	int iStatus = cvui::iarea(iEditorX, iEditorY, iEditorWidth, iEditorHeight);
+	int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
 	switch (iStatus)
 	{
 		case cvui::CLICK:

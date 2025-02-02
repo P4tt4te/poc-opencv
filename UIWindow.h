@@ -10,6 +10,8 @@ private:
 	// Editor properties
 	int iEditorWidth = 150;
 	int iEditorHeight = 200;
+	// Editor values
+	double dBlurValue = 0.0;
 	// Drag properties
 	bool bDragging = false;
 	int iEditorX = 10;
