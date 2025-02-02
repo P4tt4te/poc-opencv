@@ -6,6 +6,7 @@
 #include "shlobj_core.h"
 #include <opencv2/highgui.hpp>
 #include "cvui.h"
+#include <fmt/base.h>
 //#include "ImageTransformer.h"
 
 UIWindow::UIWindow(std::string _sWindowName, ImageTransformer* _imageTransformer)
@@ -36,51 +37,64 @@ void UIWindow::drawMenu(cv::Mat& _frame, std::string& _sCurrentPage) const
 	cvui::imshow(sWindowName, _frame);
 }
 
+#include <codecvt>
+
+// ... other includes
+
 void UIWindow::findPath()
 {
-	HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
-	if (!SUCCEEDED(hr)) {
-		fmt::report_error("Error: CoInitializeEx failed");
-	}
+    HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
+    if (!SUCCEEDED(hr)) {
+        fmt::report_error("Error: CoInitializeEx failed");
+    }
 
-	IFileDialog* pFileDialog = nullptr;
-	hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pFileDialog));
+    IFileDialog* pFileDialog = nullptr;
+    hr = CoCreateInstance(CLSID_FileOpenDialog, NULL, CLSCTX_INPROC_SERVER, IID_PPV_ARGS(&pFileDialog));
 
-	if (!SUCCEEDED(hr)) {
-		fmt::report_error("Error: CoCreateInstance failed");
-	}
+    if (!SUCCEEDED(hr)) {
+        fmt::report_error("Error: CoCreateInstance failed");
+    }
 
-	// Filter configuration
-	COMDLG_FILTERSPEC fileTypes[] = {
-		{ L"Images (*.jpg; *.jpeg; *.png)", L"*.jpg;*.jpeg;*.png" },
-		{ L"JPEG Files (*.jpg; *.jpeg)", L"*.jpg;*.jpeg" },
-		{ L"PNG Files (*.png)", L"*.png" },
-		{ L"All files (*.*)", L"*.*" }
-	};
-	pFileDialog->SetFileTypes(ARRAYSIZE(fileTypes), fileTypes);
-	pFileDialog->SetFileTypeIndex(1);
+    // Filter configuration
+    COMDLG_FILTERSPEC fileTypes[] = {
+        { L"Images (*.jpg; *.jpeg; *.png)", L"*.jpg;*.jpeg;*.png" },
+        { L"JPEG Files (*.jpg; *.jpeg)", L"*.jpg;*.jpeg" },
+        { L"PNG Files (*.png)", L"*.png" },
+        { L"All files (*.*)", L"*.*" }
+    };
+    pFileDialog->SetFileTypes(ARRAYSIZE(fileTypes), fileTypes);
+    pFileDialog->SetFileTypeIndex(1);
 
-	hr = pFileDialog->Show(NULL);
-	// Get the selected path
-	if (SUCCEEDED(hr)) {
-		IShellItem* pItem = nullptr;
-		if (SUCCEEDED(pFileDialog->GetResult(&pItem))) {
-			LPWSTR pszFilePath = nullptr;
-			if (SUCCEEDED(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath))) {
-				//fmt::print("Image sélectionnée :");
-				std::wcout << pszFilePath << std::endl;
-				// Frees the memory allocated for the string
-				CoTaskMemFree(pszFilePath);
-			}
-			pItem->Release();
-		}
-	}
+    hr = pFileDialog->Show(NULL);
+    // Get the selected path
+    if (SUCCEEDED(hr)) {
+        IShellItem* pItem = nullptr;
+        if (SUCCEEDED(pFileDialog->GetResult(&pItem))) {
+            LPWSTR pszFilePath = nullptr;
+            if (SUCCEEDED(pItem->GetDisplayName(SIGDN_FILESYSPATH, &pszFilePath))) {
+                // Convert LPWSTR to std::string
+                std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
+                std::string filePath = converter.to_bytes(pszFilePath);
 
-	pFileDialog->Release();
-	CoUninitialize();
+                std::wcout << pszFilePath << std::endl;
+
+                if (ptrImageTransformer != nullptr)
+                {
+                    ptrImageTransformer->setSource(filePath);
+                }
+
+                // Frees the memory allocated for the string
+                CoTaskMemFree(pszFilePath);
+            }
+            pItem->Release();
+        }
+    }
+
+    pFileDialog->Release();
+    CoUninitialize();
 }
 
-void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage) const
+void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 {
 	_frame = cv::Scalar(49, 52, 49);
 
@@ -97,29 +111,56 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage) const
 		cvui::image(_frame, 1, 1, resized_down);
 	}
 
-	cvui::window(_frame, 10, 10, 100, 100, "Editor");
-	cvui::beginColumn(_frame, 20, 40, 100, 100, 10);
-		cvui::text("Test");
+
+	cv::Point cursor = cvui::mouse();
+	iCursorXOld = iCursorX;
+	iCursorYOld = iCursorY;
+	iCursorX = cursor.x;
+	iCursorY = cursor.y;
+
+	if (bDragging)
+	{
+		int iXDiff = iCursorX - iCursorXOld;
+		int iYDiff = iCursorY - iCursorYOld;
+
+		if (iEditorX + iXDiff >= 0 && iEditorX + iXDiff <= 500)
+			iEditorX += iXDiff;
+
+		if (iEditorY + iYDiff >= 0 && iEditorY + iYDiff <= 300)
+			iEditorY += iYDiff;
+	}
+	
+
+	cvui::window(_frame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
+	cvui::beginColumn(_frame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
+		cvui::text("Current file : ");
+
+		if (cvui::button("Open file"))
+		{
+			findPath();
+		}
+
 		if (cvui::button("Go Back"))
 		{
 			_sCurrentPage = "menu";
 		}
 	cvui::endColumn();
 
+	int iStatus = cvui::iarea(iEditorX, iEditorY, iEditorWidth, iEditorHeight);
+	switch (iStatus)
+	{
+		case cvui::CLICK:
+			bDragging = false;
+			break;
+		case cvui::DOWN:
+			bDragging = true;
+			break;
+		default:
+			bDragging = false;
+			break;
+	}
 
 	cvui::imshow(sWindowName, _frame);
-}
-
-void UIWindow::showImage(const cv::Mat& _img) const
-{
-	cv::Mat frame = cv::Mat(cv::Size(400, 200), CV_8UC3);
-	frame = cv::Scalar(49, 52, 49);
-	cvui::text(frame, 10, 15, "Hello world!");
-
-	// Show window content
-	cvui::imshow(sWindowName, frame);
-	//cv::imshow(sWindowName, _img);
-	cv::waitKey(0);
 }
 
 void UIWindow::createButton() const
