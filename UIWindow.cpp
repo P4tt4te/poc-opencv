@@ -6,8 +6,6 @@
 #include "shlobj_core.h"
 #include <opencv2/highgui.hpp>
 #include "cvui.h"
-#include <fmt/base.h>
-//#include "ImageTransformer.h"
 
 UIWindow::UIWindow(std::string _sWindowName, ImageTransformer* _imageTransformer)
 {
@@ -136,7 +134,7 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 	cvui::beginColumn(_frame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
 		cvui::text("Current file : ");
 
-		cv::Mat lena_face = cv::imread("C:/Users/edwar/Documents/perso/dev/poc-opencv/assets/drag.png");
+		cv::Mat lena_face = cv::imread(getFullPath("./assets/drag.png"));
 		cvui::image(_frame, iEditorX + iEditorWidth - 20, iEditorY, lena_face);
 
 		if (cvui::button("Open file"))
@@ -165,6 +163,9 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 		}
 
 	cvui::endColumn();
+
+	double value = 50.0;
+	cvui::trackbar(_frame, 0, 250, 598, &value, (double)0.0, (double)100.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_SEGMENT_LABELS);
 
 	int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
 	switch (iStatus)

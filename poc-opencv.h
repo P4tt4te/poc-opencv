@@ -3,7 +3,11 @@
 
 #pragma once
 
+#include "UIWindow.h"
 #include <iostream>
-#include "ImageTransformer.h"
+#include <windows.h>
+#include <stdio.h>
+
+
 
 // TODO: Reference additional headers your program requires here.

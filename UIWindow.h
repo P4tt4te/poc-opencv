@@ -2,6 +2,7 @@
 #include <iostream>
 #include <opencv2/opencv.hpp>
 #include "ImageTransformer.h"
+#include "Helpers.h"
 
 class UIWindow {
 private:

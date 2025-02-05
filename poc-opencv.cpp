@@ -1,10 +1,7 @@
-﻿#include <windows.h>
-#include <stdio.h>
-
-#define CVUI_IMPLEMENTATION
+﻿#define CVUI_IMPLEMENTATION
 #include "cvui.h"
 
-#include "UIWindow.h"
+#include "poc-opencv.h"
 
 
 int main()
@@ -15,13 +12,14 @@ int main()
 	std::string sCurrentPage = "menu";
 	cv::Mat frame;
 	
-	// C:/Users/edwar/Pictures/Acer/Acer_Wallpaper_02_5000x2813.jpg
-	std::string sFullPathName = "";
+	std::string sFullPathPlaceholder = getFullPath("./assets/placeholder.jpg");
+	/*
 	char fullFilename[MAX_PATH];
 	GetFullPathName("./assets/placeholder.jpg", MAX_PATH, fullFilename, nullptr);
 	sFullPathName = fullFilename;
+	*/
 
-	ImageTransformer imageTransformInstance(sFullPathName);
+	ImageTransformer imageTransformInstance(sFullPathPlaceholder);
 	ImageTransformer* ptrImageInstance = &imageTransformInstance;
 
 	UIWindow window("Image edition automation", ptrImageInstance);
