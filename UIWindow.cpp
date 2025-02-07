@@ -98,15 +98,25 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 
 	if (ptrImageTransformer != nullptr)
 	{
-		cv::Mat a = ptrImageTransformer->getImg();
+		/*
+		cv::Mat filteredImage = ptrImageTransformer->getImg();
+		cv::Mat initialImage = ptrImageTransformer->getInitialImg();
 
 		// Resize to fit window
 		int down_width = 598;
 		int down_height = 398;
-		cv::Mat resized_down;
-		resize(a, resized_down, cv::Size(down_width, down_height), cv::INTER_LINEAR);
+		cv::Size fitSize = cv::Size(down_width, down_height);
 
-		cvui::image(_frame, 1, 1, resized_down);
+		cv::Mat filteredImageResized;
+		resize(filteredImage, filteredImageResized, fitSize, cv::INTER_LINEAR);
+		cv::Mat initialImageResized;
+		resize(initialImage, initialImageResized, fitSize, cv::INTER_LINEAR);
+		*/
+
+
+		std::vector<cv::Mat> result = ptrImageTransformer->getSplittedImg(598, 398);
+		cvui::image(_frame, 1, 1, result[0]);
+		cvui::image(_frame, 299, 1, result[1]);
 	}
 
 
