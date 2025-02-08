@@ -98,25 +98,13 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 
 	if (ptrImageTransformer != nullptr)
 	{
-		/*
-		cv::Mat filteredImage = ptrImageTransformer->getImg();
-		cv::Mat initialImage = ptrImageTransformer->getInitialImg();
-
-		// Resize to fit window
-		int down_width = 598;
-		int down_height = 398;
-		cv::Size fitSize = cv::Size(down_width, down_height);
-
-		cv::Mat filteredImageResized;
-		resize(filteredImage, filteredImageResized, fitSize, cv::INTER_LINEAR);
-		cv::Mat initialImageResized;
-		resize(initialImage, initialImageResized, fitSize, cv::INTER_LINEAR);
-		*/
-
-
-		std::vector<cv::Mat> result = ptrImageTransformer->getSplittedImg(598, 398);
-		cvui::image(_frame, 1, 1, result[0]);
-		cvui::image(_frame, 299, 1, result[1]);
+		std::vector<cv::Mat> vecImages;
+		int iWidth = 598;
+		int iCalculatedWidth = iWidth * (dImagePercentage / 100);
+		
+		ptrImageTransformer->getSplittedImg(vecImages, 598, 398, dImagePercentage);
+		cvui::image(_frame, 1, 1, vecImages[0]);
+		cvui::image(_frame, iCalculatedWidth, 1, vecImages[1]);
 	}
 
 
@@ -174,8 +162,7 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 
 	cvui::endColumn();
 
-	double value = 50.0;
-	cvui::trackbar(_frame, 0, 250, 598, &value, (double)0.0, (double)100.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_SEGMENT_LABELS);
+	cvui::trackbar(_frame, 0, 250, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_SEGMENT_LABELS);
 
 	int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
 	switch (iStatus)

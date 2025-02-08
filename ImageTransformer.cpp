@@ -14,7 +14,7 @@ void ImageTransformer::setSource(std::string _sSource) {
 	mImg = mInitialImg;
 }
 
-std::vector<cv::Mat> ImageTransformer::getSplittedImg(int _width, int _height)
+void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int _width, int _height, double _percentage)
 {
 	cv::Mat filteredImage = getImg();
 	cv::Mat initialImage = getInitialImg();
@@ -25,15 +25,13 @@ std::vector<cv::Mat> ImageTransformer::getSplittedImg(int _width, int _height)
 	cv::Mat initialImageResized;
 	resize(initialImage, initialImageResized, fitSize, cv::INTER_LINEAR);
 
-	std::vector<cv::Mat> result;
+	int iCalculatedWidth = _width * (_percentage / 100);
+	int iRestCalculatedWidth = _width - iCalculatedWidth;
+	cv::Rect initialRect(0, 0, iCalculatedWidth, _height);
+	cv::Rect filteredRect(iCalculatedWidth, 0, iRestCalculatedWidth, _height);
 
-	cv::Rect initialRect(0, 0, _width / 2, _height);
-	cv::Rect filteredRect(_width / 2, 0, _width / 2, _height);
-
-	result.push_back(initialImageResized(initialRect));
-	result.push_back(filteredImageResized(filteredRect));
-
-	return result;
+	_vecImages.push_back(initialImageResized(initialRect));
+	_vecImages.push_back(filteredImageResized(filteredRect));
 }
 
 void ImageTransformer::blur(int _size) {

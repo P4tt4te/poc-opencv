@@ -10,9 +10,9 @@ private:
 public:
 	ImageTransformer(std::string _sSource);
 	void setSource(std::string _sSource);
+	void getSplittedImg(std::vector<cv::Mat>& _vecImages, int _width, int _height, double _percentage);
 	cv::Mat& getImg() { return mImg; };
 	cv::Mat getInitialImg() const { return cv::imread(sInitialSource); };
-	std::vector<cv::Mat> getSplittedImg(int _width, int _height);
 	// Image processing
 	void blur(int _size);
 	void medianBlur(int _size) const;
