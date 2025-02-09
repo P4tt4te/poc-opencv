@@ -15,6 +15,6 @@ public:
 	cv::Mat getInitialImg() const { return cv::imread(sInitialSource); };
 	// Image processing
 	void blur(int _size);
-	void medianBlur(int _size) const;
+	void medianBlur(int _size);
 	void gaussianBlur(int _size) const;
 };

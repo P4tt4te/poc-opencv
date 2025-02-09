@@ -35,15 +35,19 @@ void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int _widt
 }
 
 void ImageTransformer::blur(int _size) {
-	mInitialImg = cv::imread(sInitialSource);
+	mInitialImg = getInitialImg();
 	mImg = mInitialImg;
-	cv::Mat imgBlur = mInitialImg;
-	cv::blur(imgBlur, mImg, cv::Size(_size, _size));
+	cv::blur(mInitialImg, mImg, cv::Size(_size, _size));
 }
 
-void ImageTransformer::medianBlur(int _size) const {
-	cv::Mat imgBlur = mImg;
-	cv::medianBlur(imgBlur, mImg, _size);
+void ImageTransformer::medianBlur(int _size) {
+	mInitialImg = getInitialImg();
+	mImg = mInitialImg;
+
+	if (_size % 2 != 1)
+		_size++;
+
+	cv::medianBlur(mInitialImg, mImg, _size);
 }
 
 void ImageTransformer::gaussianBlur(int _size) const {

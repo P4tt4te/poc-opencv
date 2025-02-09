@@ -37,13 +37,13 @@ void UIWindow::drawMenu(cv::Mat& _frame, std::string& _sCurrentPage) const
 
 #include <codecvt>
 
-// ... other includes
-
-void UIWindow::findPath()
+bool UIWindow::findPath()
 {
+	bool bResult = false;
     HRESULT hr = CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE);
     if (!SUCCEEDED(hr)) {
         fmt::report_error("Error: CoInitializeEx failed");
+		return false;
     }
 
     IFileDialog* pFileDialog = nullptr;
@@ -51,6 +51,7 @@ void UIWindow::findPath()
 
     if (!SUCCEEDED(hr)) {
         fmt::report_error("Error: CoCreateInstance failed");
+		return false;
     }
 
     // Filter configuration
@@ -79,6 +80,7 @@ void UIWindow::findPath()
                 if (ptrImageTransformer != nullptr)
                 {
                     ptrImageTransformer->setSource(filePath);
+					bResult = true;
                 }
 
                 // Frees the memory allocated for the string
@@ -90,6 +92,7 @@ void UIWindow::findPath()
 
     pFileDialog->Release();
     CoUninitialize();
+	return bResult;
 }
 
 void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
@@ -130,21 +133,25 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 
 	cvui::window(_frame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
 	cvui::beginColumn(_frame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
-		cvui::text("Current file : ");
-
 		cv::Mat lena_face = cv::imread(getFullPath("./assets/drag.png"));
 		cvui::image(_frame, iEditorX + iEditorWidth - 20, iEditorY, lena_face);
 
-		if (cvui::button("Open file"))
-		{
-			findPath();
-		}
+		cvui::beginRow(-1, -1, 10);
+			if (cvui::button("Go Back"))
+			{
+				_sCurrentPage = "menu";
+			}
 
-		if (cvui::button("Go Back"))
-		{
-			_sCurrentPage = "menu";
-		}
+			if (cvui::button("Open file"))
+			{
+				if (findPath())
+					dBlurValue = 0.0;
+					iMedianBlurValue = 3;
+			}
+		cvui::endRow();
 
+		// Blur trackbar
+		cvui::text("Blur");
 		if (cvui::trackbar(iEditorWidth - 20, &dBlurValue, (double)0.0, (double)15.0))
 		{
 			if (floor(dBlurValue + 0.5) > 1)
@@ -160,9 +167,18 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 			fmt::println("Trackbar value: {}", dBlurValue);
 		}
 
+		// Median blur trackbar
+		cvui::text("Median blur");
+		if (cvui::trackbar(iEditorWidth - 20, &iMedianBlurValue, 3, 15, 2))
+		{
+			fmt::println("Trackbar value: {}", iMedianBlurValue);
+			ptrImageTransformer->medianBlur(iMedianBlurValue);
+		}
+
 	cvui::endColumn();
 
-	cvui::trackbar(_frame, 0, 250, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_SEGMENT_LABELS);
+
+	cvui::trackbar(_frame, 0, 350, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_LABELS);
 
 	int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
 	switch (iStatus)
