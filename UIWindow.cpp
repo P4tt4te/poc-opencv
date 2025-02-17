@@ -6,6 +6,7 @@
 #include "shlobj_core.h"
 #include <opencv2/highgui.hpp>
 #include "cvui.h"
+#include <codecvt>
 
 UIWindow::UIWindow(std::string _sWindowName, ImageTransformer* _imageTransformer)
 {
@@ -13,29 +14,52 @@ UIWindow::UIWindow(std::string _sWindowName, ImageTransformer* _imageTransformer
 	ptrImageTransformer = _imageTransformer;
 }
 
-void UIWindow::createWindow() const
+void UIWindow::createWindow()
 {
 	cvui::init(sWindowName);
+	mFrame = cv::Mat(cv::Size(iWindowWidth, iWindowHeight), CV_8UC3);
 }
 
-void UIWindow::drawMenu(cv::Mat& _frame, std::string& _sCurrentPage) const 
+void UIWindow::cleanFrame()
 {
-
-	_frame = cv::Scalar(49, 52, 49);
-	cvui::beginColumn(_frame, 10, 20);
-
-
-	cvui::text("IEA");
-	if (cvui::button(100, 40, "Open editor")) {
-		// button was clicked
-		_sCurrentPage = "editor";
-	}
-	cvui::endColumn();
-
-	cvui::imshow(sWindowName, _frame);
+	mFrame = cv::Scalar(49, 52, 49);
 }
 
-#include <codecvt>
+void UIWindow::drawMenu(std::string& _sCurrentPage)
+{
+	cleanFrame();
+	bool bTrackbarHasMoved = false;
+	cvui::beginColumn(mFrame, 10, 20, -1, -1, 10);
+
+		cvui::text("Options");
+		cvui::checkbox("Fixed Window", bFixedSize);
+
+		// In case of fixed window
+		if (*bFixedSize)
+		{
+			cvui::text("Width");
+			if (cvui::trackbar(200, &iWindowWidth, 800, 1920)) {
+				bTrackbarHasMoved = true;
+			}
+				
+
+			cvui::text("Height");
+			if (cvui::trackbar(200, &iWindowHeight, 600, 1080)) {
+				bTrackbarHasMoved = true;
+			}			
+		}
+
+
+		if (cvui::button(100, 40, "Open editor")) {
+			_sCurrentPage = "editor";
+		}
+
+	cvui::endColumn();
+	cvui::imshow(sWindowName, mFrame);
+
+	if (bTrackbarHasMoved)
+		mFrame = cv::Mat(cv::Size(iWindowWidth, iWindowHeight), CV_8UC3);
+}
 
 bool UIWindow::findPath()
 {
@@ -95,19 +119,20 @@ bool UIWindow::findPath()
 	return bResult;
 }
 
-void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
+void UIWindow::drawEditor(std::string& _sCurrentPage)
 {
-	_frame = cv::Scalar(49, 52, 49);
+	cleanFrame();
 
 	if (ptrImageTransformer != nullptr)
 	{
 		std::vector<cv::Mat> vecImages;
-		int iWidth = 598;
+		int iWidth = iWindowWidth - 2;
+		int iHeight = iWindowHeight - 2;
 		int iCalculatedWidth = iWidth * (dImagePercentage / 100);
 		
-		ptrImageTransformer->getSplittedImg(vecImages, 598, 398, dImagePercentage);
-		cvui::image(_frame, 1, 1, vecImages[0]);
-		cvui::image(_frame, iCalculatedWidth, 1, vecImages[1]);
+		ptrImageTransformer->getSplittedImg(vecImages, iWidth, iHeight, dImagePercentage);
+		cvui::image(mFrame, 1, 1, vecImages[0]);
+		cvui::image(mFrame, iCalculatedWidth, 1, vecImages[1]);
 	}
 
 
@@ -131,10 +156,10 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 	
 	
 
-	cvui::window(_frame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
-	cvui::beginColumn(_frame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
+	cvui::window(mFrame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
+	cvui::beginColumn(mFrame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
 		cv::Mat lena_face = cv::imread(getFullPath("./assets/drag.png"));
-		cvui::image(_frame, iEditorX + iEditorWidth - 20, iEditorY, lena_face);
+		cvui::image(mFrame, iEditorX + iEditorWidth - 20, iEditorY, lena_face);
 
 		cvui::beginRow(-1, -1, 10);
 			if (cvui::button("Go Back"))
@@ -178,7 +203,7 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 	cvui::endColumn();
 
 
-	cvui::trackbar(_frame, 0, 350, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_LABELS);
+	cvui::trackbar(mFrame, 0, 350, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_LABELS);
 
 	int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
 	switch (iStatus)
@@ -194,7 +219,7 @@ void UIWindow::drawEditor(cv::Mat& _frame, std::string& _sCurrentPage)
 			break;
 	}
 
-	cvui::imshow(sWindowName, _frame);
+	cvui::imshow(sWindowName, mFrame);
 }
 
 void UIWindow::createButton() const

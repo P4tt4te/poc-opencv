@@ -6,18 +6,8 @@
 
 int main()
 {
-	std::string sMenuInput;
-
-	// Window properties
-	std::string sCurrentPage = "menu";
-	cv::Mat frame;
-	
+	std::string sCurrentPage = "menu";	
 	std::string sFullPathPlaceholder = getFullPath("./assets/placeholder.jpg");
-	/*
-	char fullFilename[MAX_PATH];
-	GetFullPathName("./assets/placeholder.jpg", MAX_PATH, fullFilename, nullptr);
-	sFullPathName = fullFilename;
-	*/
 
 	ImageTransformer imageTransformInstance(sFullPathPlaceholder);
 	ImageTransformer* ptrImageInstance = &imageTransformInstance;
@@ -27,11 +17,10 @@ int main()
 
 	while (true)
 	{
-		frame = cv::Mat(cv::Size(600, 400), CV_8UC3);
 		if (sCurrentPage == "menu")
-			window.drawMenu(frame, sCurrentPage);
+			window.drawMenu(sCurrentPage);
 		else if (sCurrentPage == "editor")
-			window.drawEditor(frame, sCurrentPage);
+			window.drawEditor(sCurrentPage);
 		else
 			break;
 
@@ -40,12 +29,6 @@ int main()
 			break;
 		}
 	}
-
-	/*
-	std::transform(sMenuInput.begin(), sMenuInput.end(), sMenuInput.begin(),
-			[](unsigned char c) { return std::toupper(c); }
-		);
-	*/
 
 	return 0;
 }
