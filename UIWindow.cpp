@@ -25,13 +25,18 @@ void UIWindow::cleanFrame()
 	mFrame = cv::Scalar(49, 52, 49);
 }
 
+void UIWindow::resizeFrame()
+{
+	mFrame = cv::Mat(cv::Size(iWindowWidth, iWindowHeight), CV_8UC3);
+}
+
 void UIWindow::drawMenu(std::string& _sCurrentPage)
 {
 	cleanFrame();
 	bool bTrackbarHasMoved = false;
 	cvui::beginColumn(mFrame, 10, 20, -1, -1, 10);
-
 		cvui::text("Options");
+		cvui::checkbox("Force Aspect Ratio", &bAspectRatio);
 		cvui::checkbox("Fixed Window", bFixedSize);
 
 		// In case of fixed window
@@ -58,7 +63,7 @@ void UIWindow::drawMenu(std::string& _sCurrentPage)
 	cvui::imshow(sWindowName, mFrame);
 
 	if (bTrackbarHasMoved)
-		mFrame = cv::Mat(cv::Size(iWindowWidth, iWindowHeight), CV_8UC3);
+		resizeFrame();
 }
 
 bool UIWindow::findPath()
@@ -128,9 +133,16 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		std::vector<cv::Mat> vecImages;
 		int iWidth = iWindowWidth - 2;
 		int iHeight = iWindowHeight - 2;
-		int iCalculatedWidth = iWidth * (dImagePercentage / 100);
 		
-		ptrImageTransformer->getSplittedImg(vecImages, iWidth, iHeight, dImagePercentage);
+		ptrImageTransformer->getSplittedImg(vecImages, iWidth, iHeight, dImagePercentage, bAspectRatio);
+
+		// In case of too large width with force aspect ratio 
+		if (iHeight > iWindowHeight)
+			iWindowHeight = iHeight + 2;
+			resizeFrame();
+
+		int iCalculatedWidth = iWidth * (dImagePercentage / 100);
+
 		cvui::image(mFrame, 1, 1, vecImages[0]);
 		cvui::image(mFrame, iCalculatedWidth, 1, vecImages[1]);
 	}
@@ -203,7 +215,7 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 	cvui::endColumn();
 
 
-	cvui::trackbar(mFrame, 0, 350, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_LABELS);
+	cvui::trackbar(mFrame, iWindowWidth / 2 - 300, iWindowHeight - 40, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_LABELS);
 
 	int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
 	switch (iStatus)

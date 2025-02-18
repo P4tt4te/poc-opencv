@@ -10,7 +10,7 @@ private:
 public:
 	ImageTransformer(std::string _sSource);
 	void setSource(std::string _sSource);
-	void getSplittedImg(std::vector<cv::Mat>& _vecImages, int _width, int _height, double _percentage);
+	void getSplittedImg(std::vector<cv::Mat>& _vecImages, int& _width, int& _height, double _percentage, bool _bForceRatio = false);
 	cv::Mat& getImg() { return mImg; };
 	cv::Mat getInitialImg() const { return cv::imread(sInitialSource); };
 	// Image processing

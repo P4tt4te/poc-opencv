@@ -14,10 +14,18 @@ void ImageTransformer::setSource(std::string _sSource) {
 	mImg = mInitialImg;
 }
 
-void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int _width, int _height, double _percentage)
+void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int& _width, int& _height, double _percentage, bool _bForceRatio)
 {
 	cv::Mat filteredImage = getImg();
 	cv::Mat initialImage = getInitialImg();
+
+	if (_bForceRatio)
+	{
+		double dRatio = static_cast<double>(initialImage.rows) / static_cast<double>(initialImage.cols);
+
+		_height = _width * dRatio;
+	}
+
 	cv::Size fitSize = cv::Size(_width, _height);
 
 	cv::Mat filteredImageResized;

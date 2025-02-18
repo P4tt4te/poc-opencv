@@ -16,6 +16,7 @@ private:
 	int iEditorWidth = 200;
 	int iEditorHeight = 300;
 	double dImagePercentage = 50.0;
+	bool bAspectRatio = false;
 	bool* bFixedSize = new bool(false);
 	// Editor values
 	double dBlurValue = 0.0;
@@ -35,6 +36,7 @@ public:
 	int getHeight() const { return iWindowHeight; };
 	void createWindow();
 	void cleanFrame();
+	void resizeFrame();
 	void drawMenu(std::string& _sCurrentPage);
 	bool findPath();
 	void drawEditor(std::string& _sCurrentPage);
