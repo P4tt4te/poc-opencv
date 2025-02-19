@@ -15,6 +15,8 @@ int main()
 	UIWindow window("Image edition automation", ptrImageInstance);
 	window.createWindow();
 
+	_SetCvWindowIcon("Image edition automation");
+
 	while (true)
 	{
 		if (sCurrentPage == "menu")
