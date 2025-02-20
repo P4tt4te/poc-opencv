@@ -13,7 +13,7 @@ private:
 	int iWindowWidth = 800;
 	int iWindowHeight = 600;
 	// Editor properties
-	int iEditorWidth = 200;
+	int iEditorWidth = 215;
 	int iEditorHeight = 300;
 	double dImagePercentage = 50.0;
 	bool bAspectRatio = false;

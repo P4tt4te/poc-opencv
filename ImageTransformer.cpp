@@ -42,14 +42,22 @@ void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int& _wid
 	_vecImages.push_back(filteredImageResized(filteredRect));
 }
 
-void ImageTransformer::blur(int _size) {
+void ImageTransformer::save(std::string _sPath)
+{
+	cv::imwrite(_sPath,mImg);
+}
+
+void ImageTransformer::clean()
+{
 	mInitialImg = getInitialImg();
+}
+
+void ImageTransformer::blur(int _size) {
 	mImg = mInitialImg;
 	cv::blur(mInitialImg, mImg, cv::Size(_size, _size));
 }
 
 void ImageTransformer::medianBlur(int _size) {
-	mInitialImg = getInitialImg();
 	mImg = mInitialImg;
 
 	if (_size % 2 != 1)

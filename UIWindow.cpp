@@ -173,24 +173,34 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		cv::Mat lena_face = cv::imread(getFullPath("./assets/drag.png"));
 		cvui::image(mFrame, iEditorX + iEditorWidth - 20, iEditorY, lena_face);
 
-		cvui::beginRow(-1, -1, 10);
-			if (cvui::button("Go Back"))
+		cvui::beginRow(-1, -1, 5);
+			if (cvui::button("Back"))
 			{
 				_sCurrentPage = "menu";
 			}
 
-			if (cvui::button("Open file"))
+			if (cvui::button("Open"))
 			{
 				if (findPath())
 					dBlurValue = 0.0;
 					iMedianBlurValue = 3;
 			}
+
+			if (cvui::button("Save"))
+			{
+				ptrImageTransformer->save(getFullPath("./Output.jpg"));
+			}
 		cvui::endRow();
+
+		bool bImageCleaned = false;
 
 		// Blur trackbar
 		cvui::text("Blur");
 		if (cvui::trackbar(iEditorWidth - 20, &dBlurValue, (double)0.0, (double)15.0))
 		{
+			ptrImageTransformer->clean();
+			bImageCleaned = true;
+
 			if (floor(dBlurValue + 0.5) > 1)
 			{
 				ptrImageTransformer->blur(floor(dBlurValue + 0.5));
@@ -208,6 +218,10 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		cvui::text("Median blur");
 		if (cvui::trackbar(iEditorWidth - 20, &iMedianBlurValue, 3, 15, 2))
 		{
+			if (!bImageCleaned)
+				bImageCleaned = true;
+				ptrImageTransformer->clean();
+
 			fmt::println("Trackbar value: {}", iMedianBlurValue);
 			ptrImageTransformer->medianBlur(iMedianBlurValue);
 		}
