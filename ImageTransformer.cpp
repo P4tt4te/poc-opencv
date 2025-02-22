@@ -5,6 +5,20 @@ ImageTransformer::ImageTransformer(std::string _sSource) {
 	std::replace(sInitialSource.begin(), sInitialSource.end(), '\\', '/');
 	mImg = cv::imread(sInitialSource, cv::IMREAD_COLOR);
 	mInitialImg = mImg;
+	
+	// Initialize FaceDetectorYN
+	std::string fd_modelPath = "./assets/face_detection_yunet_2023mar.onnx";
+	float scoreThreshold = 0.9;
+	float nmsThreshold = 0.3;
+	int topK = 5000;
+
+	bool save = false;
+	float scale = 1.0;
+
+	double cosine_similar_thresh = 0.363;
+	double l2norm_similar_thresh = 1.128;
+
+	pFaceDetectorYN = cv::FaceDetectorYN::create(fd_modelPath, "", cv::Size(320, 320), scoreThreshold, nmsThreshold, topK);
 }
 
 void ImageTransformer::setSource(std::string _sSource) {
@@ -75,4 +89,32 @@ void ImageTransformer::erode(int _size) {
 	mImg = mInitialImg;
 	cv::Mat kernel = cv::getStructuringElement(2, cv::Size(_size, _size));
 	cv::erode(mImg, mImg, kernel);
+}
+
+int ImageTransformer::detectFace(cv::Mat& _frame)
+{
+	int thickness = 2;
+	// Set input size before inference
+	pFaceDetectorYN->setInputSize(mImg.size());
+
+	cv::Mat faces;
+	pFaceDetectorYN->detect(mImg, faces);
+	if (faces.rows < 1)
+	{
+		//std::cerr << "Cannot find a face in " << input1 << std::endl;
+		return 0;
+	}
+
+	for (int i = 0; i < faces.rows; i++) {
+		// Draw bounding box
+		cv::rectangle(_frame, cv::Rect2i(int(faces.at<float>(i, 0)), int(faces.at<float>(i, 1)), int(faces.at<float>(i, 2)), int(faces.at<float>(i, 3))), cv::Scalar(0, 255, 0), thickness);
+		// Draw landmarks
+		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 4)), int(faces.at<float>(i, 5))), 2, cv::Scalar(255, 0, 0), thickness);
+		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 6)), int(faces.at<float>(i, 7))), 2, cv::Scalar(0, 0, 255), thickness);
+		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 8)), int(faces.at<float>(i, 9))), 2, cv::Scalar(0, 255, 0), thickness);
+		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 10)), int(faces.at<float>(i, 11))), 2, cv::Scalar(255, 0, 255), thickness);
+		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 12)), int(faces.at<float>(i, 13))), 2, cv::Scalar(0, 255, 255), thickness);
+	}
+
+	return faces.rows;
 }

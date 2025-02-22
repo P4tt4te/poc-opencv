@@ -14,7 +14,7 @@ private:
 	int iWindowHeight = 600;
 	// Editor properties
 	int iEditorWidth = 215;
-	int iEditorHeight = 300;
+	int iEditorHeight = 320;
 	double dImagePercentage = 50.0;
 	bool bAspectRatio = false;
 	bool* bFixedSize = new bool(false);
@@ -23,6 +23,7 @@ private:
 	int iMedianBlurValue = 3;
 	double dGaussianBlurValue = 0.0;
 	int iErodeValue = 3;
+	bool bFaceDetection = false;
 	// Drag properties
 	bool bDragging = false;
 	int iEditorX = 10;

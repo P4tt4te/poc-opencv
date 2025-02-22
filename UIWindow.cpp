@@ -238,6 +238,19 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 			ptrImageTransformer->erode(iErodeValue);
 		}
 
+		cvui::checkbox("Face Detection", &bFaceDetection);
+		if (bFaceDetection) {
+			int iFaceCount = ptrImageTransformer->detectFace(mFrame);
+
+			if (iFaceCount > 0)
+			{
+				cvui::text("Faces detected: {}");
+			}
+			else
+			{
+				cvui::text("No face detected !", 0.4, 0xEF1818);
+			}
+		}
 
 	cvui::endColumn();
 

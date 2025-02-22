@@ -1,12 +1,14 @@
 #include <fmt/base.h>
 #include <iostream>
 #include <opencv2/opencv.hpp>
+#include <opencv2/dnn.hpp>
 
 class ImageTransformer {
 private:
 	std::string sInitialSource;
 	cv::Mat mInitialImg;
 	cv::Mat mImg;
+	cv::Ptr<cv::FaceDetectorYN> pFaceDetectorYN;
 public:
 	ImageTransformer(std::string _sSource);
 	void setSource(std::string _sSource);
@@ -20,4 +22,6 @@ public:
 	void medianBlur(int _size);
 	void gaussianBlur(int _size) const;
 	void erode(int _size);
+	// Face detection
+	int detectFace(cv::Mat& _frame);
 };
