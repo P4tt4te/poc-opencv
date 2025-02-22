@@ -2,6 +2,10 @@
 
 This is a proof of concept project to demonstrate the use of OpenCV with C++.
 
+*Deps :*
+- OpenCV 4.10.0
+- FMT 11.0.2
+
 ## Requirements
 
 - CMake

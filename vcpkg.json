@@ -1,6 +1,6 @@
 {
   "dependencies": [
     "fmt",
-    "opencv2"
+    "opencv"
   ]
 }

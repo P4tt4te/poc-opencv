@@ -11,7 +11,7 @@ static std::string getFullPath(const char* _sPath) {
 };
 
 static HWND _GetCvWindow(LPCSTR lpWndName) {
-    HWND hWnd = (HWND)cvGetWindowHandle(lpWndName);
+    HWND hWnd = (HWND)FindWindow(NULL, lpWndName);
     if (IsWindow(hWnd)) {
         HWND hParent = GetParent(hWnd);
         DWORD dwPid = 0;
