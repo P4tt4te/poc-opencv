@@ -70,3 +70,9 @@ void ImageTransformer::gaussianBlur(int _size) const {
 	cv::Mat imgBlur = mImg;
 	cv::GaussianBlur(imgBlur, mImg, cv::Size(_size, _size), 0);
 }
+
+void ImageTransformer::erode(int _size) {
+	mImg = mInitialImg;
+	cv::Mat kernel = cv::getStructuringElement(2, cv::Size(_size, _size));
+	cv::erode(mImg, mImg, kernel);
+}

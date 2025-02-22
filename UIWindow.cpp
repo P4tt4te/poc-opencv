@@ -193,10 +193,11 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		cvui::endRow();
 
 		bool bImageCleaned = false;
+		int iTrackWidth = iEditorWidth - 20;
 
 		// Blur trackbar
 		cvui::text("Blur");
-		if (cvui::trackbar(iEditorWidth - 20, &dBlurValue, (double)0.0, (double)15.0))
+		if (cvui::trackbar(iTrackWidth, &dBlurValue, (double)0.0, (double)15.0))
 		{
 			ptrImageTransformer->clean();
 			bImageCleaned = true;
@@ -216,7 +217,7 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 
 		// Median blur trackbar
 		cvui::text("Median blur");
-		if (cvui::trackbar(iEditorWidth - 20, &iMedianBlurValue, 3, 15, 2))
+		if (cvui::trackbar(iTrackWidth, &iMedianBlurValue, 3, 15, 2))
 		{
 			if (!bImageCleaned)
 				bImageCleaned = true;
@@ -225,6 +226,18 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 			fmt::println("Trackbar value: {}", iMedianBlurValue);
 			ptrImageTransformer->medianBlur(iMedianBlurValue);
 		}
+
+		// Erode trackbar
+		cvui::text("Erode");
+		if (cvui::trackbar(iTrackWidth, &iErodeValue, 3, 15, 2)) {
+			if (!bImageCleaned)
+				bImageCleaned = true;
+			ptrImageTransformer->clean();
+
+			fmt::println("Trackbar value: {}", iErodeValue);
+			ptrImageTransformer->erode(iErodeValue);
+		}
+
 
 	cvui::endColumn();
 

@@ -22,6 +22,7 @@ private:
 	double dBlurValue = 0.0;
 	int iMedianBlurValue = 3;
 	double dGaussianBlurValue = 0.0;
+	int iErodeValue = 3;
 	// Drag properties
 	bool bDragging = false;
 	int iEditorX = 10;

@@ -19,4 +19,5 @@ public:
 	void blur(int _size);
 	void medianBlur(int _size);
 	void gaussianBlur(int _size) const;
+	void erode(int _size);
 };
