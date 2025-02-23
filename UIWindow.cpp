@@ -133,63 +133,66 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		std::vector<cv::Mat> vecImages;
 		int iWidth = iWindowWidth - 2;
 		int iHeight = iWindowHeight - 2;
-		
+
 		ptrImageTransformer->getSplittedImg(vecImages, iWidth, iHeight, dImagePercentage, bAspectRatio);
 
 		// In case of too large width with force aspect ratio 
 		if (iHeight > iWindowHeight)
 			iWindowHeight = iHeight + 2;
-			resizeFrame();
+		resizeFrame();
 
 		int iCalculatedWidth = iWidth * (dImagePercentage / 100);
 
 		cvui::image(mFrame, 1, 1, vecImages[0]);
 		cvui::image(mFrame, iCalculatedWidth, 1, vecImages[1]);
-	}
 
 
-	cv::Point cursor = cvui::mouse();
-	iCursorXOld = iCursorX;
-	iCursorYOld = iCursorY;
-	iCursorX = cursor.x;
-	iCursorY = cursor.y;
+		cv::Point cursor = cvui::mouse();
+		iCursorXOld = iCursorX;
+		iCursorYOld = iCursorY;
+		iCursorX = cursor.x;
+		iCursorY = cursor.y;
 
-	if (bDragging)
-	{
-		int iXDiff = iCursorX - iCursorXOld;
-		int iYDiff = iCursorY - iCursorYOld;
+		if (bDragging)
+		{
+			int iXDiff = iCursorX - iCursorXOld;
+			int iYDiff = iCursorY - iCursorYOld;
 
-		if (iEditorX + iXDiff >= 0 && iEditorX + iXDiff <= 500)
-			iEditorX += iXDiff;
+			if (iEditorX + iXDiff >= 0 && iEditorX + iXDiff <= 500)
+				iEditorX += iXDiff;
 
-		if (iEditorY + iYDiff >= 0 && iEditorY + iYDiff <= 300)
-			iEditorY += iYDiff;
-	}
-	
-	
+			if (iEditorY + iYDiff >= 0 && iEditorY + iYDiff <= 300)
+				iEditorY += iYDiff;
+		}
 
-	cvui::window(mFrame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
-	cvui::beginColumn(mFrame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
+		// Draw face detection rectangle
+		int iFaceCount = -1;
+		if (bFaceDetection) {
+			iFaceCount = ptrImageTransformer->detectFace(mFrame);
+		}
+
+		cvui::window(mFrame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
+		cvui::beginColumn(mFrame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
 		cv::Mat lena_face = cv::imread(getFullPath("./assets/drag.png"));
 		cvui::image(mFrame, iEditorX + iEditorWidth - 20, iEditorY, lena_face);
 
 		cvui::beginRow(-1, -1, 5);
-			if (cvui::button("Back"))
-			{
-				_sCurrentPage = "menu";
-			}
+		if (cvui::button("Back"))
+		{
+			_sCurrentPage = "menu";
+		}
 
-			if (cvui::button("Open"))
-			{
-				if (findPath())
-					dBlurValue = 0.0;
-					iMedianBlurValue = 3;
-			}
+		if (cvui::button("Open"))
+		{
+			if (findPath())
+				dBlurValue = 0.0;
+			iMedianBlurValue = 3;
+		}
 
-			if (cvui::button("Save"))
-			{
-				ptrImageTransformer->save(getFullPath("./Output.jpg"));
-			}
+		if (cvui::button("Save"))
+		{
+			ptrImageTransformer->save(getFullPath("./Output.jpg"), bFaceDetection);
+		}
 		cvui::endRow();
 
 		bool bImageCleaned = false;
@@ -221,7 +224,7 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		{
 			if (!bImageCleaned)
 				bImageCleaned = true;
-				ptrImageTransformer->clean();
+			ptrImageTransformer->clean();
 
 			fmt::println("Trackbar value: {}", iMedianBlurValue);
 			ptrImageTransformer->medianBlur(iMedianBlurValue);
@@ -239,12 +242,10 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		}
 
 		cvui::checkbox("Face Detection", &bFaceDetection);
-		if (bFaceDetection) {
-			int iFaceCount = ptrImageTransformer->detectFace(mFrame);
-
+		if (bFaceDetection && iFaceCount != -1) {
 			if (iFaceCount > 0)
 			{
-				cvui::text("Faces detected: {}");
+				cvui::text(std::format("Faces detected: {}",iFaceCount));
 			}
 			else
 			{
@@ -252,14 +253,14 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 			}
 		}
 
-	cvui::endColumn();
+		cvui::endColumn();
 
 
-	cvui::trackbar(mFrame, iWindowWidth / 2 - 300, iWindowHeight - 40, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_LABELS);
+		cvui::trackbar(mFrame, iWindowWidth / 2 - 300, iWindowHeight - 40, 598, &dImagePercentage, (double)1.0, (double)99.0, 1, "%.1Lf", cvui::TRACKBAR_HIDE_LABELS);
 
-	int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
-	switch (iStatus)
-	{
+		int iStatus = cvui::iarea(iEditorX + iEditorWidth - 20, iEditorY, 18, 18);
+		switch (iStatus)
+		{
 		case cvui::CLICK:
 			bDragging = false;
 			break;
@@ -269,8 +270,8 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		default:
 			bDragging = false;
 			break;
+		}
 	}
-
 	cvui::imshow(sWindowName, mFrame);
 }
 

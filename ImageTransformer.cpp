@@ -46,6 +46,7 @@ void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int& _wid
 	resize(filteredImage, filteredImageResized, fitSize, cv::INTER_LINEAR);
 	cv::Mat initialImageResized;
 	resize(initialImage, initialImageResized, fitSize, cv::INTER_LINEAR);
+	mInitialImgResized = initialImageResized;
 
 	int iCalculatedWidth = _width * (_percentage / 100);
 	int iRestCalculatedWidth = _width - iCalculatedWidth;
@@ -56,9 +57,13 @@ void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int& _wid
 	_vecImages.push_back(filteredImageResized(filteredRect));
 }
 
-void ImageTransformer::save(std::string _sPath)
+void ImageTransformer::save(std::string _sPath, bool& _bWithFaces)
 {
-	cv::imwrite(_sPath,mImg);
+	cv::Mat imgWithFaces = mImg.clone();
+	if (_bWithFaces)
+		detectFace(imgWithFaces, true);
+
+	cv::imwrite(_sPath,imgWithFaces);
 }
 
 void ImageTransformer::clean()
@@ -91,14 +96,16 @@ void ImageTransformer::erode(int _size) {
 	cv::erode(mImg, mImg, kernel);
 }
 
-int ImageTransformer::detectFace(cv::Mat& _frame)
+int ImageTransformer::detectFace(cv::Mat& _frame, bool _bNoResize)
 {
 	int thickness = 2;
 	// Set input size before inference
-	pFaceDetectorYN->setInputSize(mImg.size());
+	cv::Mat& i1 = _bNoResize ? mImg : mInitialImgResized;
+
+	pFaceDetectorYN->setInputSize(i1.size());
 
 	cv::Mat faces;
-	pFaceDetectorYN->detect(mImg, faces);
+	pFaceDetectorYN->detect(i1, faces);
 	if (faces.rows < 1)
 	{
 		//std::cerr << "Cannot find a face in " << input1 << std::endl;

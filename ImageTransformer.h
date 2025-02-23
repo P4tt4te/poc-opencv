@@ -7,6 +7,7 @@ class ImageTransformer {
 private:
 	std::string sInitialSource;
 	cv::Mat mInitialImg;
+	cv::Mat mInitialImgResized;
 	cv::Mat mImg;
 	cv::Ptr<cv::FaceDetectorYN> pFaceDetectorYN;
 public:
@@ -15,7 +16,7 @@ public:
 	void getSplittedImg(std::vector<cv::Mat>& _vecImages, int& _width, int& _height, double _percentage, bool _bForceRatio = false);
 	cv::Mat& getImg() { return mImg; };
 	cv::Mat getInitialImg() const { return cv::imread(sInitialSource); };
-	void save(std::string _sPath);
+	void save(std::string _sPath, bool& _bWithFaces);
 	// Image processing
 	void clean();
 	void blur(int _size);
@@ -23,5 +24,5 @@ public:
 	void gaussianBlur(int _size) const;
 	void erode(int _size);
 	// Face detection
-	int detectFace(cv::Mat& _frame);
+	int detectFace(cv::Mat& _frame, bool _bNoResize = false);
 };
