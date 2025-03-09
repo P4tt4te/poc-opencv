@@ -166,9 +166,12 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		}
 
 		// Draw face detection rectangle
-		int iFaceCount = -1;
 		if (bFaceDetection) {
-			iFaceCount = ptrImageTransformer->detectFace(mFrame);
+			ptrImageTransformer->detectFace(mFrame);
+		}
+		int iFaceCount = ptrImageTransformer->getFaceCount();
+		if (iFaceCount > 0) {
+			ptrImageTransformer->drawFace(mFrame);
 		}
 
 		cvui::window(mFrame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
@@ -241,17 +244,27 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 			ptrImageTransformer->erode(iErodeValue);
 		}
 
-		cvui::checkbox("Face Detection", &bFaceDetection);
-		if (bFaceDetection && iFaceCount != -1) {
+		// Face Detection
+		cvui::text("Face Detection");
+		bFaceDetection = false;
+		if (cvui::button("Refresh")) {
+			bFaceDetection = true;
+		}
+
+		if (iFaceCount != -1) {
 			if (iFaceCount > 0)
 			{
-				cvui::text(std::format("Faces detected: {}",iFaceCount));
+				cvui::text(std::format("Faces detected {}", iFaceCount));
 			}
 			else
 			{
 				cvui::text("No face detected !", 0.4, 0xEF1818);
 			}
 		}
+		
+
+		//cvui::checkbox("Face Detection", &bFaceDetection);
+	
 
 		cvui::endColumn();
 

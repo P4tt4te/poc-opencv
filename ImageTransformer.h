@@ -10,6 +10,7 @@ private:
 	cv::Mat mInitialImgResized;
 	cv::Mat mImg;
 	cv::Ptr<cv::FaceDetectorYN> pFaceDetectorYN;
+	cv::Mat mFaces;
 public:
 	ImageTransformer(std::string _sSource);
 	void setSource(std::string _sSource);
@@ -24,5 +25,7 @@ public:
 	void gaussianBlur(int _size) const;
 	void erode(int _size);
 	// Face detection
-	int detectFace(cv::Mat& _frame, bool _bNoResize = false);
+	int getFaceCount() { return mFaces.rows; };
+	void detectFace(cv::Mat& _frame, bool _bNoResize = false);
+	void drawFace(cv::Mat& _frame);
 };

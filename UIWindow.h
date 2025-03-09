@@ -14,7 +14,7 @@ private:
 	int iWindowHeight = 600;
 	// Editor properties
 	int iEditorWidth = 215;
-	int iEditorHeight = 320;
+	int iEditorHeight = 370;
 	double dImagePercentage = 50.0;
 	bool bAspectRatio = false;
 	bool* bFixedSize = new bool(false);

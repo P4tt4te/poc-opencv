@@ -26,6 +26,7 @@ void ImageTransformer::setSource(std::string _sSource) {
 	std::replace(sInitialSource.begin(), sInitialSource.end(), '\\', '/');
 	mInitialImg = cv::imread(sInitialSource);
 	mImg = mInitialImg;
+	mFaces = cv::Mat();
 }
 
 void ImageTransformer::getSplittedImg(std::vector<cv::Mat>& _vecImages,int& _width, int& _height, double _percentage, bool _bForceRatio)
@@ -96,7 +97,7 @@ void ImageTransformer::erode(int _size) {
 	cv::erode(mImg, mImg, kernel);
 }
 
-int ImageTransformer::detectFace(cv::Mat& _frame, bool _bNoResize)
+void ImageTransformer::detectFace(cv::Mat& _frame, bool _bNoResize)
 {
 	int thickness = 2;
 	// Set input size before inference
@@ -104,24 +105,26 @@ int ImageTransformer::detectFace(cv::Mat& _frame, bool _bNoResize)
 
 	pFaceDetectorYN->setInputSize(i1.size());
 
-	cv::Mat faces;
-	pFaceDetectorYN->detect(i1, faces);
-	if (faces.rows < 1)
+	pFaceDetectorYN->detect(i1, mFaces);
+}
+
+void ImageTransformer::drawFace(cv::Mat& _frame)
+{
+	int thickness = 2;
+	if (mFaces.rows < 1)
 	{
-		//std::cerr << "Cannot find a face in " << input1 << std::endl;
-		return 0;
+		return;
 	}
 
-	for (int i = 0; i < faces.rows; i++) {
+	for (int i = 0; i < mFaces.rows; i++) 
+	{
 		// Draw bounding box
-		cv::rectangle(_frame, cv::Rect2i(int(faces.at<float>(i, 0)), int(faces.at<float>(i, 1)), int(faces.at<float>(i, 2)), int(faces.at<float>(i, 3))), cv::Scalar(0, 255, 0), thickness);
+		cv::rectangle(_frame, cv::Rect2i(int(mFaces.at<float>(i, 0)), int(mFaces.at<float>(i, 1)), int(mFaces.at<float>(i, 2)), int(mFaces.at<float>(i, 3))), cv::Scalar(0, 255, 0), thickness);
 		// Draw landmarks
-		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 4)), int(faces.at<float>(i, 5))), 2, cv::Scalar(255, 0, 0), thickness);
-		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 6)), int(faces.at<float>(i, 7))), 2, cv::Scalar(0, 0, 255), thickness);
-		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 8)), int(faces.at<float>(i, 9))), 2, cv::Scalar(0, 255, 0), thickness);
-		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 10)), int(faces.at<float>(i, 11))), 2, cv::Scalar(255, 0, 255), thickness);
-		cv::circle(_frame, cv::Point2i(int(faces.at<float>(i, 12)), int(faces.at<float>(i, 13))), 2, cv::Scalar(0, 255, 255), thickness);
+		cv::circle(_frame, cv::Point2i(int(mFaces.at<float>(i, 4)), int(mFaces.at<float>(i, 5))), 2, cv::Scalar(255, 0, 0), thickness);
+		cv::circle(_frame, cv::Point2i(int(mFaces.at<float>(i, 6)), int(mFaces.at<float>(i, 7))), 2, cv::Scalar(0, 0, 255), thickness);
+		cv::circle(_frame, cv::Point2i(int(mFaces.at<float>(i, 8)), int(mFaces.at<float>(i, 9))), 2, cv::Scalar(0, 255, 0), thickness);
+		cv::circle(_frame, cv::Point2i(int(mFaces.at<float>(i, 10)), int(mFaces.at<float>(i, 11))), 2, cv::Scalar(255, 0, 255), thickness);
+		cv::circle(_frame, cv::Point2i(int(mFaces.at<float>(i, 12)), int(mFaces.at<float>(i, 13))), 2, cv::Scalar(0, 255, 255), thickness);
 	}
-
-	return faces.rows;
 }
