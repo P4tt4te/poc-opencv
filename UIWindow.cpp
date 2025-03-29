@@ -158,10 +158,10 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 			int iXDiff = iCursorX - iCursorXOld;
 			int iYDiff = iCursorY - iCursorYOld;
 
-			if (iEditorX + iXDiff >= 0 && iEditorX + iXDiff <= 500)
+			if (iEditorX + iXDiff >= 0 && iEditorX + iXDiff <= (iWindowWidth - iEditorWidth))
 				iEditorX += iXDiff;
 
-			if (iEditorY + iYDiff >= 0 && iEditorY + iYDiff <= 300)
+			if (iEditorY + iYDiff >= 0 && iEditorY + iYDiff <= (iWindowHeight - iEditorHeight))
 				iEditorY += iYDiff;
 		}
 
@@ -261,10 +261,6 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 				cvui::text("No face detected !", 0.4, 0xEF1818);
 			}
 		}
-		
-
-		//cvui::checkbox("Face Detection", &bFaceDetection);
-	
 
 		cvui::endColumn();
 
