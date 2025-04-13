@@ -10,6 +10,7 @@ private:
 	cv::Mat mInitialImgResized;
 	cv::Mat mImg;
 	cv::Ptr<cv::FaceDetectorYN> pFaceDetectorYN;
+	cv::dnn::dnn4_v20240521::Net pReadNet;
 	cv::Mat mFaces;
 public:
 	ImageTransformer(std::string _sSource);

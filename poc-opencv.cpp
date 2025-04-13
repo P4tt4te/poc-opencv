@@ -1,6 +1,5 @@
 ﻿#define CVUI_IMPLEMENTATION
 #include "cvui.h"
-
 #include "poc-opencv.h"
 
 

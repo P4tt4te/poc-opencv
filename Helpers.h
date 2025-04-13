@@ -10,6 +10,7 @@ static std::string getFullPath(const char* _sPath) {
 	return sFullPathName;
 };
 
+#pragma region Icon
 static HWND _GetCvWindow(LPCSTR lpWndName) {
     HWND hWnd = (HWND)FindWindow(NULL, lpWndName);
     if (IsWindow(hWnd)) {
@@ -39,3 +40,22 @@ static void _SetCvWindowIcon(LPCSTR lpWndName) {
         SendMessageW(hWnd, (WPARAM)WM_SETICON, ICON_SMALL, (LPARAM)hIcon);
     }
 }
+#pragma endregion
+
+static const std::vector<std::string> nanodetClassLabels =
+{
+    "person", "bicycle", "car", "motorcycle", "airplane", "bus",
+    "train", "truck", "boat", "traffic light", "fire hydrant",
+    "stop sign", "parking meter", "bench", "bird", "cat", "dog",
+    "horse", "sheep", "cow", "elephant", "bear", "zebra", "giraffe",
+    "backpack", "umbrella", "handbag", "tie", "suitcase", "frisbee",
+    "skis", "snowboard", "sports ball", "kite", "baseball bat",
+    "baseball glove", "skateboard", "surfboard", "tennis racket",
+    "bottle", "wine glass", "cup", "fork", "knife", "spoon", "bowl",
+    "banana", "apple", "sandwich", "orange", "broccoli", "carrot",
+    "hot dog", "pizza", "donut", "cake", "chair", "couch",
+    "potted plant", "bed", "dining table", "toilet", "tv", "laptop",
+    "mouse", "remote", "keyboard", "cell phone", "microwave",
+    "oven", "toaster", "sink", "refrigerator", "book", "clock",
+    "vase", "scissors", "teddy bear", "hair drier", "toothbrush"
+};

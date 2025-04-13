@@ -19,6 +19,9 @@ ImageTransformer::ImageTransformer(std::string _sSource) {
 	double l2norm_similar_thresh = 1.128;
 
 	pFaceDetectorYN = cv::FaceDetectorYN::create(fd_modelPath, "", cv::Size(320, 320), scoreThreshold, nmsThreshold, topK);
+	// Initialize ObjectDetector
+	std::string od_modelPath = "./assets/object_detection_nanodet_2022nov.onnx";
+	pReadNet = cv::dnn::readNet(od_modelPath);
 }
 
 void ImageTransformer::setSource(std::string _sSource) {
