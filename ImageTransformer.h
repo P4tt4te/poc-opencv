@@ -31,5 +31,6 @@ public:
 	void drawFace(cv::Mat& _frame);
 	// Object detection
 	void detectObject(cv::Mat& _frame, bool _bNoResize = false);
+	void drawObject(cv::Mat& _frame);
 
 };
