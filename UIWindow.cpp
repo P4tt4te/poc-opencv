@@ -173,6 +173,10 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 		if (iFaceCount > 0) {
 			ptrImageTransformer->drawFace(mFrame);
 		}
+		
+		if (bObjectDetection) {
+			ptrImageTransformer->detectObject(mFrame);
+		}
 
 		cvui::window(mFrame, iEditorX, iEditorY, iEditorWidth, iEditorHeight, "Editor");
 		cvui::beginColumn(mFrame, iEditorX + 10, iEditorY + 30, iEditorWidth, iEditorHeight, 10);
@@ -260,6 +264,13 @@ void UIWindow::drawEditor(std::string& _sCurrentPage)
 			{
 				cvui::text("No face detected !", 0.4, 0xEF1818);
 			}
+		}
+
+		// Object Detection
+		cvui::text("Object Detection");
+		bObjectDetection = false;
+		if (cvui::button("Refresh")) {
+			bObjectDetection = true;
 		}
 
 		cvui::endColumn();

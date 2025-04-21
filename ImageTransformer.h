@@ -29,4 +29,7 @@ public:
 	int getFaceCount() { return mFaces.rows; };
 	void detectFace(cv::Mat& _frame, bool _bNoResize = false);
 	void drawFace(cv::Mat& _frame);
+	// Object detection
+	void detectObject(cv::Mat& _frame, bool _bNoResize = false);
+
 };
