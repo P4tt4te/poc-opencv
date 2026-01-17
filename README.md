@@ -20,6 +20,9 @@ This is a proof of concept project to demonstrate the use of OpenCV with C++.
 After building the project, you can run the generated executable :
 **poc-opencv.exe**
 
+<img width="799" height="628" alt="image" src="https://github.com/user-attachments/assets/79aca1d7-818d-4062-9ac8-aa65c9b1a77b" />
+
+
 ## Acknowledgements
 
 - [OpenCV](https://opencv.org/)
