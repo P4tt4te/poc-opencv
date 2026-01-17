@@ -19,11 +19,6 @@ ImageTransformer::ImageTransformer(std::string _sSource) {
 	double l2norm_similar_thresh = 1.128;
 
 	pFaceDetectorYN = cv::FaceDetectorYN::create(fd_modelPath, "", cv::Size(320, 320), scoreThreshold, nmsThreshold, topK);
-	// Initialize ObjectDetector
-	std::string od_modelPath = "./assets/object_detection_nanodet_2022nov.onnx";
-	pReadNet = cv::dnn::readNet(od_modelPath);
-	pReadNet.setPreferableBackend(cv::dnn::DNN_BACKEND_OPENCV);
-	pReadNet.setPreferableTarget(cv::dnn::DNN_TARGET_CPU);
 }
 
 void ImageTransformer::setSource(std::string _sSource) {
@@ -134,30 +129,6 @@ void ImageTransformer::drawFace(cv::Mat& _frame)
 		cv::circle(_frame, cv::Point2i(int(mFaces.at<float>(i, 10)), int(mFaces.at<float>(i, 11))), 2, cv::Scalar(255, 0, 255), thickness);
 		cv::circle(_frame, cv::Point2i(int(mFaces.at<float>(i, 12)), int(mFaces.at<float>(i, 13))), 2, cv::Scalar(0, 255, 255), thickness);
 	}
-}
-
-// #pragma endregion
-
-// #pragma region Object Detection
-void ImageTransformer::detectObject(cv::Mat& _frame, bool _bNoResize)
-{
-	cv::Mat& i1 = _bNoResize ? mImg : mInitialImgResized;
-
-	cv::dnn::Image2BlobParams paramNanodet;
-	paramNanodet.datalayout = cv::dnn::DNN_LAYOUT_NCHW;
-	paramNanodet.ddepth = CV_32F;
-	paramNanodet.mean = cv::Scalar(103.53, 116.28, 123.675);
-	paramNanodet.scalefactor = cv::Scalar(49, 52, 49);
-	paramNanodet.size = cv::Size(416, 416);
-
-	cv::Mat blob;
-	cv::dnn::blobFromImageWithParams(mInitialImgResized, blob, paramNanodet);
-	pReadNet.setInput(blob);
-
-	std::vector<cv::Mat> outs;
-	pReadNet.forward(outs, pReadNet.getUnconnectedOutLayersNames());
-
-	// TODO: write objects & init parameters one time
 }
 
 // #pragma endregion

@@ -24,7 +24,6 @@ private:
 	double dGaussianBlurValue = 0.0;
 	int iErodeValue = 3;
 	bool bFaceDetection = false;
-	bool bObjectDetection = false;
 	// Drag properties
 	bool bDragging = false;
 	int iEditorX = 10;

@@ -10,7 +10,6 @@ private:
 	cv::Mat mInitialImgResized;
 	cv::Mat mImg;
 	cv::Ptr<cv::FaceDetectorYN> pFaceDetectorYN;
-	cv::dnn::dnn4_v20240521::Net pReadNet;
 	cv::Mat mFaces;
 public:
 	ImageTransformer(std::string _sSource);
@@ -29,7 +28,4 @@ public:
 	int getFaceCount() { return mFaces.rows; };
 	void detectFace(cv::Mat& _frame, bool _bNoResize = false);
 	void drawFace(cv::Mat& _frame);
-	// Object detection
-	void detectObject(cv::Mat& _frame, bool _bNoResize = false);
-
 };
